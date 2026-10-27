@@ -46,18 +46,30 @@ async def upload_and_scan_extension(file: UploadFile = File(...)) -> ScanResultR
             detail="Filename missing from upload.",
         )
 
-    content = await file.read()
-    if len(content) == 0:
+    # Incremental streaming read with strict limit enforcement to protect memory
+    chunks = []
+    total_bytes = 0
+    chunk_size = 64 * 1024  # 64 KB chunks
+
+    while True:
+        chunk = await file.read(chunk_size)
+        if not chunk:
+            break
+        total_bytes += len(chunk)
+        if total_bytes > settings.MAX_UPLOAD_SIZE_BYTES:
+            raise HTTPException(
+                status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                detail=f"Uploaded file exceeds maximum allowed size of {settings.MAX_UPLOAD_SIZE_BYTES // (1024 * 1024)} MB.",
+            )
+        chunks.append(chunk)
+
+    if total_bytes == 0:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Uploaded package is empty.",
         )
 
-    if len(content) > settings.MAX_UPLOAD_SIZE_BYTES:
-        raise HTTPException(
-            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-            detail=f"Uploaded file exceeds maximum allowed size of {settings.MAX_UPLOAD_SIZE_BYTES // (1024 * 1024)} MB.",
-        )
+    content = b"".join(chunks)
 
     try:
         with safe_extract_extension(content) as (temp_dir, summary):
@@ -76,9 +88,11 @@ async def upload_and_scan_extension(file: UploadFile = File(...)) -> ScanResultR
             detail=e.safe_message,
         ) from e
     except Exception as e:
+        # Avoid leaking internal system paths or raw exceptions
+        err_type = type(e).__name__
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"An error occurred while inspecting the extension package: {str(e)}",
+            detail=f"An error occurred while inspecting the extension package ({err_type}). Please verify package integrity.",
         ) from e
 
 

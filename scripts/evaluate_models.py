@@ -124,6 +124,13 @@ def main():
     print(f"Obfuscated:  Recall={obf_res['under_obfuscation']['recall']:.4f}, FPR={obf_res['under_obfuscation']['fpr']:.4f}")
     print(f"Deltas:      {obf_res['robustness_deltas']['interpretation']}")
 
+    if "source_level_suite" in obf_res:
+        src_res = obf_res["source_level_suite"]
+        print("\n--- Source-Level Real Code Transformation Matrix ---")
+        print(f"Total Fixtures: {src_res['total_fixtures']} | Precision: {src_res['metrics']['precision']:.4f} | Recall: {src_res['metrics']['recall']:.4f} | FPR: {src_res['metrics']['fpr']:.4f}")
+        for fx in src_res["results"]:
+            print(f"  [{fx['code_category']:<32}] {fx['fixture_id']:<32} Truth: {fx['ground_truth']:<10} Pred: {fx['predicted_verdict']:<20} Score: {fx['risk_score']:<6.4f}")
+
     # 5. Structured Error Analysis
     print("\n--- Structured Error Analysis ---")
     error_analysis = perform_structured_error_analysis(y_test, probs, x_test, sample_ids, threshold=threshold)

@@ -240,14 +240,26 @@ def run_full_inference(
         top_risk, protective = [], []
 
     # 4. Outcome Classification (Strictly Separated & Transparent)
+    is_confirmed_malicious_construct = (
+        feat_dict.get("atob_btoa_into_eval_or_func", 0.0) > 0
+        or (feat_dict.get("flag_remotescript_eval", 0.0) > 0 and feat_dict.get("csp_has_unsafe_eval", 0.0) > 0)
+        or (feat_dict.get("flag_cookies_broadhost_network", 0.0) > 0)
+    )
+
     if matched_threat_intel:
         risk_verdict = "KNOWN_MALICIOUS_IOC"
         risk_verdict_label = "Known Threat Match (Threat Intel IOC)"
         risk_score = 1.0
-    elif calibrated_prob >= 0.65 or (calibrated_prob >= alert_threshold and calibrated_prob >= 0.50):
+    elif summary.js_file_count == 0 and len(manifest.permissions) == 0 and not manifest.content_scripts:
+        risk_verdict = "ANALYSIS_INCOMPLETE"
+        risk_verdict_label = "Analysis Incomplete (No JavaScript Code Found to Inspect)"
+        risk_score = 0.0
+        evidence.append("[AUDIT_NOTICE] Package contains zero JavaScript files; static program analysis was not possible.")
+    elif calibrated_prob >= 0.65 or is_confirmed_malicious_construct or (calibrated_prob >= alert_threshold and calibrated_prob >= 0.35):
         risk_verdict = "HIGH_RISK"
         risk_verdict_label = "High Model Risk (Malicious Indicators Detected)"
-        risk_score = float(round(calibrated_prob, 4))
+        effective_score = max(calibrated_prob, 0.75 if is_confirmed_malicious_construct else calibrated_prob)
+        risk_score = float(round(effective_score, 4))
     elif calibrated_prob >= 0.20:
         risk_verdict = "SUSPICIOUS_UNCERTAIN"
         risk_verdict_label = "Suspicious / Uncertain Risk"

@@ -45,6 +45,7 @@ ml/artifacts/*.json
 *.sqlite3
 temp_scans/
 uploads/
+_backup_baseline/
 
 # Environments
 .env

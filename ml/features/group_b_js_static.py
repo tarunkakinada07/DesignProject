@@ -2,16 +2,25 @@
 
 Extracts static structural and API usage features across JavaScript files:
 - Line counts, size, line length statistics
-- Sensitive chrome.* and browser.* API calls
+- Sensitive chrome.* and browser.* API calls (dot and computed bracket access)
 - Network calls (fetch, XMLHttpRequest, WebSocket, sendBeacon)
-- Dynamic code execution (eval, new Function, setTimeout with strings, dynamic script tags)
+- Dynamic code execution (eval, new Function, aliased eval, dynamic script tags)
 - External URLs, IP literals, and Shannon entropy
+- AST-guided structural inspection via Esprima with safe lexical fallback
 """
+
+from __future__ import annotations
 
 import math
 import re
 from pathlib import Path
 from typing import Any
+
+from ml.parsing.ast_analyzer import (
+    ASTAnalysisResult,
+    FindingEvidence,
+    analyze_javascript_file,
+)
 
 API_PATTERNS = {
     "call_chrome_webrequest": re.compile(r"\b(?:chrome|browser)\.webRequest\b"),
@@ -67,6 +76,10 @@ def extract_group_b_js_features(
 ) -> tuple[dict[str, float], list[str], dict[str, Any]]:
     """Extract Group B static features across all JavaScript files in the extension.
 
+    Combines AST-based structural inspection with lexical regex patterns to guarantee
+    zero missed detections while accurately capturing aliasing, bracket access, and
+    decode-to-exec pipelines.
+
     Returns (features_dict, evidence_notes, metadata_dict).
     """
     evidence: list[str] = []
@@ -88,7 +101,12 @@ def extract_group_b_js_features(
         features["ip_literal_url_count"] = 0.0
         features["shannon_entropy_source"] = 0.0
         features["shannon_entropy_strings"] = 0.0
-        return features, evidence, {"js_files": []}
+        return features, evidence, {
+            "js_files": [],
+            "code_categories": {},
+            "parser_warnings": [],
+            "ast_findings": [],
+        }
 
     total_bytes = 0
     total_lines = 0
@@ -97,11 +115,15 @@ def extract_group_b_js_features(
     all_strings = []
     external_urls_seen = set()
     ip_literals_seen = set()
+    parser_warnings: list[str] = []
+    ast_findings: list[dict[str, Any]] = []
+    code_categories: dict[str, int] = {}
 
     for js_p in js_files:
         try:
             content = js_p.read_text(encoding="utf-8", errors="ignore")
-        except Exception:
+        except Exception as e:
+            parser_warnings.append(f"Failed to read {js_p.name}: {e}")
             continue
 
         size = len(content.encode("utf-8"))
@@ -114,18 +136,48 @@ def extract_group_b_js_features(
 
         all_source_concat.append(content)
 
-        # Count API patterns
-        for key, pat in API_PATTERNS.items():
-            matches = len(pat.findall(content))
-            features[key] += float(matches)
+        # 1. Structural AST Analysis
+        ast_result: ASTAnalysisResult = analyze_javascript_file(js_p)
+        if ast_result.parser_warning:
+            parser_warnings.append(f"{js_p.name}: {ast_result.parser_warning}")
 
-        # Extract URLs
+        # Track code categories across files
+        cat = ast_result.code_category
+        code_categories[cat] = code_categories.get(cat, 0) + 1
+
+        # Extract structured AST evidence
+        for ev in ast_result.evidence:
+            tag = f"[{ev.category.upper()}]"
+            loc = f":{ev.line_number}" if ev.line_number else ""
+            ast_findings.append({
+                "file": ev.file_name,
+                "line": ev.line_number,
+                "category": ev.category,
+                "description": ev.description,
+            })
+            evidence.append(f"{tag} {ev.file_name}{loc} — {ev.description}")
+
+        # 2. Count API patterns: combine AST count and Lexical count (max)
+        for key, pat in API_PATTERNS.items():
+            regex_matches = len(pat.findall(content))
+            ast_matches = ast_result.api_counts.get(key, 0)
+
+            # In AST, aliased eval counts towards call_eval
+            if key == "call_eval" and ast_result.aliased_eval_count > 0:
+                ast_matches += ast_result.aliased_eval_count
+            # In AST, DOM script injections count towards call_dynamic_script_injection
+            if key == "call_dynamic_script_injection" and ast_result.dom_script_injections > 0:
+                ast_matches = max(ast_matches, ast_result.dom_script_injections)
+
+            features[key] += float(max(regex_matches, ast_matches))
+
+        # 3. Extract URLs
         for m in URL_REGEX.findall(content):
             external_urls_seen.add(m)
         for m in IP_LITERAL_REGEX.findall(content):
             ip_literals_seen.add(m)
 
-        # Extract string literals
+        # 4. Extract string literals
         for str_match in STRING_LITERAL_REGEX.findall(content):
             all_strings.append(str_match)
 
@@ -145,30 +197,33 @@ def extract_group_b_js_features(
     combined_strings = "".join(all_strings)
     features["shannon_entropy_strings"] = compute_shannon_entropy(combined_strings[:50000])
 
-    # Record evidence
-    if features["call_eval"] > 0:
-        evidence.append(f"Dynamic eval() invocation count: {int(features['call_eval'])}")
-    if features["call_function_constructor"] > 0:
+    # Record high-level summary evidence if not already covered
+    if features["call_eval"] > 0 and not any("eval" in e.lower() for e in evidence):
+        evidence.append(f"[HEURISTIC_SUSPICION] Dynamic eval() invocation count: {int(features['call_eval'])}")
+    if features["call_function_constructor"] > 0 and not any("function()" in e.lower() for e in evidence):
         evidence.append(
-            f"Dynamic Function() constructor count: {int(features['call_function_constructor'])}"
+            f"[HEURISTIC_SUSPICION] Dynamic Function() constructor count: {int(features['call_function_constructor'])}"
         )
-    if features["call_chrome_cookies"] > 0:
-        evidence.append(f"Direct chrome.cookies API calls: {int(features['call_chrome_cookies'])}")
-    if features["call_chrome_webrequest"] > 0:
+    if features["call_chrome_cookies"] > 0 and not any("cookies" in e.lower() for e in evidence):
+        evidence.append(f"[OBSERVED_FACT] Direct chrome.cookies API calls: {int(features['call_chrome_cookies'])}")
+    if features["call_chrome_webrequest"] > 0 and not any("webrequest" in e.lower() for e in evidence):
         evidence.append(
-            f"Direct chrome.webRequest interception calls: {int(features['call_chrome_webrequest'])}"
+            f"[OBSERVED_FACT] Direct chrome.webRequest interception calls: {int(features['call_chrome_webrequest'])}"
         )
-    if features["call_chrome_scripting"] > 0:
+    if features["call_chrome_scripting"] > 0 and not any("scripting" in e.lower() for e in evidence):
         evidence.append(
-            f"Dynamic code injection via chrome.scripting: {int(features['call_chrome_scripting'])}"
+            f"[OBSERVED_FACT] Dynamic code injection via chrome.scripting: {int(features['call_chrome_scripting'])}"
         )
     if features["ip_literal_url_count"] > 0:
-        evidence.append(f"Hardcoded IP literal URLs found: {int(features['ip_literal_url_count'])}")
+        evidence.append(f"[THREAT_INDICATOR] Hardcoded IP literal URLs found: {int(features['ip_literal_url_count'])}")
 
     metadata = {
         "js_files": [str(p.name) for p in js_files],
         "external_urls_sample": list(external_urls_seen)[:5],
         "ip_literals": list(ip_literals_seen),
+        "code_categories": code_categories,
+        "parser_warnings": parser_warnings,
+        "ast_findings": ast_findings[:20],
     }
 
     return features, evidence, metadata

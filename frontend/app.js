@@ -212,6 +212,10 @@ function initScanner() {
       bannerClass = "verdict-suspicious";
       scoreColor = "var(--accent-yellow)";
       bannerIcon = "⚠️";
+    } else if (data.risk_verdict === "ANALYSIS_INCOMPLETE" || data.risk_verdict === "INCONCLUSIVE") {
+      bannerClass = "verdict-incomplete";
+      scoreColor = "var(--accent-cyan)";
+      bannerIcon = "ℹ️";
     }
 
     // Threat Intel details box

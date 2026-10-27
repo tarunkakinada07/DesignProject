@@ -478,6 +478,12 @@ body {
   border-color: rgba(52, 211, 153, 0.4);
 }
 
+.verdict-banner.verdict-incomplete,
+.verdict-banner.verdict-inconclusive {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
 .verdict-title {
   font-size: 1.2rem;
   font-weight: 700;

@@ -11,6 +11,7 @@ import numpy as np
 from sklearn.base import BaseEstimator
 from sklearn.metrics import f1_score, precision_score, recall_score
 
+from ml.evaluation.source_obfuscation_suite import run_source_level_obfuscation_suite
 from ml.features.schema import ALL_FEATURE_KEYS
 
 
@@ -89,6 +90,8 @@ def evaluate_obfuscation_robustness(
     delta_rec = float(round(obf_rec - clean_rec, 4))
     delta_fpr = float(round(obf_fpr - clean_fpr, 4))
 
+    source_suite_results = run_source_level_obfuscation_suite()
+
     return {
         "clean_baseline": {
             "recall": clean_rec,
@@ -110,4 +113,5 @@ def evaluate_obfuscation_robustness(
                 "under simulated standard JS obfuscation."
             ),
         },
+        "source_level_suite": source_suite_results,
     }
