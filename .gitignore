@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing & Linting
+.pytest_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# Datasets & Checkpoints (Per Master Prompt Constraints: Never commit raw samples/checkpoints)
+ml/data/raw/
+ml/data/processed/
+ml/artifacts/*.joblib
+ml/artifacts/*.json
+!ml/artifacts/model_card_template.json
+!ml/data/manifests/
+!ml/data/**/fixtures/
+
+# Local databases & uploads
+*.db
+*.sqlite
+*.sqlite3
+temp_scans/
+uploads/
+
+# Environments
+.env
+.DS_Store
+Thumbs.db

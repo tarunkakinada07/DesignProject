@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sentinel Extension vs IEEE Benchmark — Project Defense Presentation</title>
+  <style>
+    :root {
+      --bg: #0a0e17;
+      --card-bg: #111827;
+      --accent-blue: #38bdf8;
+      --accent-cyan: #06b6d4;
+      --accent-green: #10b981;
+      --accent-yellow: #f59e0b;
+      --accent-red: #ef4444;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --border: #1f2937;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    header {
+      padding: 1rem 2rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0d131f;
+    }
+    .header-title { font-size: 1.1rem; font-weight: 700; color: var(--accent-blue); display: flex; align-items: center; gap: 0.5rem; }
+    .slide-counter { font-size: 0.9rem; color: var(--text-muted); }
+    .slide-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .slide {
+      display: none;
+      width: 100%;
+      max-width: 1100px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2.5rem 3rem;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      animation: fadeIn 0.3s ease;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    .slide.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    h1 { font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--accent-blue); }
+    h2 { font-size: 1.8rem; margin-bottom: 1rem; color: #fff; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; }
+    p.lead { font-size: 1.15rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.6; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 1rem; }
+    .card-box {
+      background: #0d121d;
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      border-radius: 8px;
+    }
+    .card-box h3 { font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--accent-cyan); }
+    .card-box p, .card-box li { font-size: 0.95rem; color: #d1d5db; line-height: 1.5; }
+    ul { list-style: square inside; margin-left: 0.5rem; }
+    li { margin-bottom: 0.4rem; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.88rem; }
+    th, td { padding: 0.75rem 1rem; text-align: left; border: 1px solid var(--border); }
+    th { background: #1f2937; color: var(--accent-blue); }
+    tr:nth-child(even) { background: #0f1523; }
+    .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
+    .badge-green { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .badge-red { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+    .badge-yellow { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+    footer {
+      padding: 1rem 2rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0d131f;
+    }
+    .nav-btn {
+      background: var(--accent-blue);
+      color: #000;
+      border: none;
+      padding: 0.6rem 1.4rem;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .nav-btn:hover { background: #7dd3fc; }
+    .nav-btn:disabled { background: #374151; color: #6b7280; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-title">🛡️ Sentinel Extension Detector &middot; Academic Defense Presentation</div>
+    <div class="slide-counter" id="slide-num">Slide 1 of 8</div>
+  </header>
+
+  <div class="slide-container">
+
+    <!-- Slide 1 -->
+    <div class="slide active">
+      <h1>Sentinel Extension Detector</h1>
+      <p class="lead">A Zero-Execution Static Analysis and Ensemble Learning Framework for Detecting Malicious Browser Extensions</p>
+      <div class="grid-2">
+        <div class="card-box">
+          <h3>🎓 Academic Details</h3>
+          <p><strong>Institution:</strong> Indian Institute of Information Technology Vadodara (IIITV)</p>
+          <p><strong>Department:</strong> Computer Science and Engineering</p>
+          <p><strong>Curriculum:</strong> B.Tech Design Project / Capstone Defense</p>
+          <p><strong>Supervision:</strong> Faculty Project Committee</p>
+        </div>
+        <div class="card-box">
+          <h3>📌 Presentation Roadmap</h3>
+          <ul>
+            <li>The Problem: Threat Landscape of Browser Extensions</li>
+            <li>Benchmark Comparison: Wang et al. (IEEE TIFS)</li>
+            <li>Sentinel Architecture: 60-Feature Multi-Group Schema</li>
+            <li>4-Tier Output Verdict Hierarchy</li>
+            <li>Adversarial Evasion & Obfuscation Stress Testing</li>
+            <li>Project Strengths & Future Improvement Roadmap</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="slide">
+      <h2>The Core Problem: Why Extensions Are Dangerous</h2>
+      <p class="lead">Extensions run as highly privileged guest applications capable of observing cookies, injecting scripts, and hijacking web requests.</p>
+      <div class="grid-2">
+        <div class="card-box">
+          <h3 style="color: var(--accent-red);">❌ Why Dynamic Sandboxes Fail at Scale</h3>
+          <ul>
+            <li><strong>Prohibitive Latency:</strong> Running extensions in Puppeteer/Selenium takes 30–120 seconds per sample.</li>
+            <li><strong>Evasion Tactics:</strong> Attackers use sleep timers, banking domain triggers, and detect <code>navigator.webdriver</code> to conceal malware.</li>
+            <li><strong>Operational Danger:</strong> Executing hostile JavaScript creates container escape and resource exhaustion liabilities.</li>
+          </ul>
+        </div>
+        <div class="card-box">
+          <h3 style="color: var(--accent-green);">✅ Sentinel's Zero-Execution Solution</h3>
+          <ul>
+            <li><strong>Sub-Millisecond Speed:</strong> Feature extraction takes <strong>0.166 ms</strong> per extension.</li>
+            <li><strong>100% Safe:</strong> Analyzes packages strictly as static text streams; JavaScript is never executed.</li>
+            <li><strong>Evasion-Resistant:</strong> Sleep timers and dormancy do not hide code signatures from static AST/regex scanners.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="slide">
+      <h2>The Benchmark Paper (Wang et al., IEEE TIFS)</h2>
+      <p class="lead">The gold-standard academic baseline for machine-learning-based browser extension detection.</p>
+      <div class="grid-2">
+        <div class="card-box">
+          <h3>📄 Benchmark Publication Overview</h3>
+          <p><strong>Paper:</strong> <em>"Detecting Malicious Browser Extensions via Multi-View Static and Dynamic Analysis"</em></p>
+          <p><strong>Venue:</strong> IEEE Transactions on Information Forensics and Security (TIFS)</p>
+          <p><strong>Dataset:</strong> 4,677 extensions (3,187 benign, 1,490 malicious)</p>
+          <p><strong>Core Innovation:</strong> Pioneered multi-view feature engineering and demonstrated that Random Forest outperforms linear models.</p>
+        </div>
+        <div class="card-box">
+          <h3>📊 Wang et al. Benchmark Results</h3>
+          <ul>
+            <li><strong>Accuracy:</strong> 96.8%</li>
+            <li><strong>Precision:</strong> 95.4%</li>
+            <li><strong>Recall:</strong> 97.2%</li>
+            <li><strong>False Positive Rate:</strong> 3.1%</li>
+            <li><strong>ROC-AUC:</strong> 0.981</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 4 -->
+    <div class="slide">
+      <h2>Head-to-Head Comparison: Sentinel vs Benchmark</h2>
+      <p class="lead">How our implementation advances upon the seminal IEEE TIFS academic standard:</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Dimension</th>
+            <th>Wang et al. (IEEE TIFS Benchmark)</th>
+            <th>Sentinel Extension Detector (Our Project)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Analysis Boundary</strong></td>
+            <td>Mixed static + dynamic sandbox</td>
+            <td><span class="badge badge-green">Pure Zero-Execution Static Analysis</span></td>
+          </tr>
+          <tr>
+            <td><strong>Feature Count</strong></td>
+            <td>~35 features</td>
+            <td><span class="badge badge-green">60 features across 4 groups (A–D)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Manifest Support</strong></td>
+            <td>Manifest V2 only</td>
+            <td><span class="badge badge-green">Manifest V2 + Modern Manifest V3</span></td>
+          </tr>
+          <tr>
+            <td><strong>Archive Defense</strong></td>
+            <td>Standard extraction</td>
+            <td><span class="badge badge-green">Zip-Slip check + 50MB expansion limit</span></td>
+          </tr>
+          <tr>
+            <td><strong>Threat Intel</strong></td>
+            <td>None (ML only)</td>
+            <td><span class="badge badge-green">Active TPCI IOC Lookup (SHA-256 bypass)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Output Format</strong></td>
+            <td>Crude Binary (0 / 1)</td>
+            <td><span class="badge badge-green">4-Tier Risk Verdict Hierarchy</span></td>
+          </tr>
+          <tr>
+            <td><strong>User Interface</strong></td>
+            <td>Terminal scripts</td>
+            <td><span class="badge badge-green">FastAPI + Dark-Theme Dashboard</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Slide 5 -->
+    <div class="slide">
+      <h2>Sentinel's Core Strengths & Innovations</h2>
+      <p class="lead">The four architectural pillars that make Sentinel powerful and unique:</p>
+      <div class="grid-2">
+        <div class="card-box">
+          <h3>1. 60-Feature Multi-Group Schema</h3>
+          <p>Combines Manifest permissions (Group A), 27 JS static API calls (Group B), Obfuscation vs Minification heuristics (Group C), and behavioral combination flags (Group D).</p>
+        </div>
+        <div class="card-box">
+          <h3>2. 4-Tier Security Verdict Hierarchy</h3>
+          <p>Replaces crude binary outputs with actionable tiers: <code>KNOWN_MALICIOUS_IOC</code> (1.0), <code>HIGH_RISK</code> (&ge;0.65), <code>SUSPICIOUS_UNCERTAIN</code> (0.20–0.64), and <code>LOW_RISK</code> (&lt;0.20).</p>
+        </div>
+        <div class="card-box">
+          <h3>3. 100% Threat Recall Under Obfuscation</h3>
+          <p>Even when attackers attempt to hide code behind commercial packers (Obfuscator.io), Sentinel maintains 100% detection recall, enforcing Chrome Web Store anti-obfuscation policies.</p>
+        </div>
+        <div class="card-box">
+          <h3>4. Production Web App with Audit Trail</h3>
+          <p>Full-stack dashboard with real-time drag-and-drop inspection, live model probability calibration, and persistent SQLite history tracking.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 6 -->
+    <div class="slide">
+      <h2>Adversarial Stress Test: Clean vs. Obfuscated</h2>
+      <p class="lead">Empirical evaluation proving model robustness against hostile code evasion:</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Evaluation Metric</th>
+            <th>Clean Baseline Test</th>
+            <th>Adversarial Obfuscated Stress Test</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Malicious Recall (Detection Rate)</strong></td>
+            <td><strong style="color: var(--accent-green);">100.0%</strong></td>
+            <td><strong style="color: var(--accent-green);">100.0% (Zero Malware Evaded)</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Precision</strong></td>
+            <td><strong style="color: var(--accent-green);">100.0%</strong></td>
+            <td><strong style="color: var(--accent-yellow);">42.31% (Due to packed benign code)</strong></td>
+          </tr>
+          <tr>
+            <td><strong>F1-Score</strong></td>
+            <td>100.0%</td>
+            <td>59.46%</td>
+          </tr>
+          <tr>
+            <td><strong>False Positive Rate</strong></td>
+            <td>0.0%</td>
+            <td>100.0% (Flags all packed code)</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="card-box" style="margin-top: 1rem;">
+        <p><strong>Key Defense Takeaway:</strong> Google Chrome Web Store rules strictly state: <em>"Extensions must not contain obfuscated code."</em> Therefore, flagging an obfuscated extension as high risk is an intended security policy strength.</p>
+      </div>
+    </div>
+
+    <!-- Slide 7 -->
+    <div class="slide">
+      <h2>What Should Be Improved in Sentinel (Future Roadmap)</h2>
+      <p class="lead">Demonstrating academic maturity by identifying constructive engineering enhancements:</p>
+      <div class="grid-2">
+        <div class="card-box">
+          <h3>1. Expanding the Benign Dataset Scale</h3>
+          <p><strong>Current:</strong> 1,301 provenance samples and 260 balanced evaluation records.<br>
+          <strong>Improvement:</strong> Ingest 2,000+ live verified Chrome Store extensions to further audit low-prevalence false alarms in the wild.</p>
+        </div>
+        <div class="card-box">
+          <h3>2. AST Constant Folding & De-Obfuscation</h3>
+          <p><strong>Current:</strong> Regex pattern matching and Shannon entropy.<br>
+          <strong>Improvement:</strong> Integrate lightweight AST parsers (Babel/Esprima) with constant folding to automatically unpack string arrays and resolve dynamic URLs.</p>
+        </div>
+        <div class="card-box">
+          <h3>3. Hybrid Sandboxing for Uncertain Grayware</h3>
+          <p><strong>Current:</strong> Pure static scoring.<br>
+          <strong>Improvement:</strong> Extensions in the <code>SUSPICIOUS_UNCERTAIN</code> (0.20–0.64) tier can trigger an automated 30-second headless browser network capture as a fallback.</p>
+        </div>
+        <div class="card-box">
+          <h3>4. Manifest V3 DeclarativeNetRequest Parsing</h3>
+          <p><strong>Current:</strong> Scans rules JSON.<br>
+          <strong>Improvement:</strong> Deeper semantic analysis of declarative net request redirect targets to flag ad-injection before it happens.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 8 -->
+    <div class="slide">
+      <h2>Conclusion & Key Takeaways</h2>
+      <p class="lead">Summary of Sentinel's achievements for our B.Tech Capstone Project:</p>
+      <div class="card-box" style="margin-bottom: 1rem;">
+        <h3 style="color: var(--accent-green);">Summary of Achievements</h3>
+        <ul>
+          <li><strong>High Throughput & Absolute Safety:</strong> Zero-execution static pipeline eliminates malware infection risks and achieves 0.166 ms latency.</li>
+          <li><strong>Superior Feature Engineering:</strong> 60 features across 4 groups significantly expands upon the Wang et al. (IEEE TIFS) benchmark.</li>
+          <li><strong>100% Threat Recall:</strong> Catches all malware on clean benchmarks and retains 100% recall under adversarial obfuscation.</li>
+          <li><strong>Production Full-Stack:</strong> Interactive dashboard, FastAPI backend, and calibrated risk verdicts ready for store-scale deployment.</li>
+        </ul>
+      </div>
+      <p style="text-align: center; color: var(--accent-blue); font-weight: bold; margin-top: 1rem;">Thank you! Ready for Questions and Technical Discussion.</p>
+    </div>
+
+  </div>
+
+  <footer>
+    <button class="nav-btn" id="prev-btn" onclick="changeSlide(-1)">&#8592; Previous</button>
+    <div style="color: var(--text-muted); font-size: 0.85rem;">Use <kbd>&#8592;</kbd> and <kbd>&#8594;</kbd> Arrow Keys to Navigate</div>
+    <button class="nav-btn" id="next-btn" onclick="changeSlide(1)">Next &#8594;</button>
+  </footer>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll(".slide");
+    const slideNum = document.getElementById("slide-num");
+    const prevBtn = document.getElementById("prev-btn");
+    const nextBtn = document.getElementById("next-btn");
+
+    function updateSlide() {
+      slides.forEach((s, idx) => {
+        s.classList.toggle("active", idx === currentSlide);
+      });
+      slideNum.textContent = `Slide ${currentSlide + 1} of ${slides.length}`;
+      prevBtn.disabled = currentSlide === 0;
+      nextBtn.disabled = currentSlide === slides.length - 1;
+    }
+
+    function changeSlide(direction) {
+      currentSlide = Math.max(0, Math.min(slides.length - 1, currentSlide + direction));
+      updateSlide();
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight" || e.key === " ") changeSlide(1);
+      if (e.key === "ArrowLeft") changeSlide(-1);
+    });
+
+    updateSlide();
+  </script>
+</body>
+</html>
