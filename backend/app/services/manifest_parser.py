@@ -246,6 +246,33 @@ def parse_manifest_data(raw_data: str | bytes | dict[str, Any]) -> NormalizedMan
     )
 
 
+def find_extension_root(base_dir: Path) -> Path:
+    """Find the root directory of an extension package.
+
+    - If manifest.json is directly in base_dir, returns base_dir.
+    - If the extension is enclosed in a single top-level folder, returns that folder.
+    - If multiple manifests exist (e.g. a dataset or bundle archive), raises ManifestNotFoundError.
+    """
+    if (base_dir / "manifest.json").is_file():
+        return base_dir
+
+    manifest_dirs: list[Path] = []
+    for d in base_dir.rglob("manifest.json"):
+        # Ignore macOS metadata (__MACOSX) and hidden files
+        if not any(part.startswith((".", "__")) for part in d.parts):
+            manifest_dirs.append(d.parent)
+
+    if len(manifest_dirs) == 1:
+        return manifest_dirs[0]
+    elif len(manifest_dirs) > 1:
+        raise ManifestNotFoundError(
+            f"Multiple extension manifests found in archive ({len(manifest_dirs)})",
+            safe_message=f"Archive contains a dataset of {len(manifest_dirs)} separate extensions. Please upload an individual extension package (.zip or .crx).",
+        )
+
+    return base_dir
+
+
 def parse_manifest_file(root_dir: Path) -> NormalizedManifest:
     """Find and parse manifest.json inside the extracted extension root directory.
 
@@ -254,7 +281,8 @@ def parse_manifest_file(root_dir: Path) -> NormalizedManifest:
     - CorruptManifestError if manifest.json is invalid JSON.
     - InvalidManifestError if schema is invalid.
     """
-    manifest_path = root_dir / "manifest.json"
+    effective_root = find_extension_root(root_dir)
+    manifest_path = effective_root / "manifest.json"
     if not manifest_path.is_file():
         raise ManifestNotFoundError(
             f"No manifest.json located at root {root_dir}",

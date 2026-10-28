@@ -16,7 +16,7 @@ from backend.app.schemas.scan import (
     ScanResultResponse,
 )
 from backend.app.services.inference_service import run_full_inference
-from backend.app.services.manifest_parser import parse_manifest_file
+from backend.app.services.manifest_parser import find_extension_root, parse_manifest_file
 from backend.app.services.safe_extractor import safe_extract_extension
 from ml.training.model_registry import get_active_model
 
@@ -73,9 +73,10 @@ async def upload_and_scan_extension(file: UploadFile = File(...)) -> ScanResultR
 
     try:
         with safe_extract_extension(content) as (temp_dir, summary):
-            manifest = parse_manifest_file(temp_dir)
+            effective_root = find_extension_root(temp_dir)
+            manifest = parse_manifest_file(effective_root)
             result = run_full_inference(
-                temp_dir=temp_dir,
+                temp_dir=effective_root,
                 sha256=summary.sha256,
                 format_str=summary.format,
                 manifest=manifest,

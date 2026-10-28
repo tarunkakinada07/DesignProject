@@ -20,6 +20,7 @@ from backend.app.core.exceptions import (
     ManifestNotFoundError,
 )
 from backend.app.services.manifest_parser import (
+    find_extension_root,
     parse_manifest_data,
     parse_manifest_file,
 )
@@ -145,3 +146,31 @@ def test_csp_unsafe_eval_detection():
         "content_security_policy": {"extension_pages": "script-src 'self'"},
     })
     assert m2.csp_has_unsafe_eval is False
+
+
+def test_find_extension_root_nested_folder(tmp_path: Path):
+    nested_dir = tmp_path / "my_extension_folder"
+    nested_dir.mkdir()
+    manifest_file = nested_dir / "manifest.json"
+    manifest_file.write_text('{"manifest_version": 3, "name": "Nested Ext", "version": "1.0.0"}', encoding="utf-8")
+
+    # Should find nested folder root
+    root = find_extension_root(tmp_path)
+    assert root == nested_dir
+
+    parsed = parse_manifest_file(tmp_path)
+    assert parsed.name == "Nested Ext"
+
+
+def test_find_extension_root_multi_extension_dataset(tmp_path: Path):
+    ext1 = tmp_path / "ext_one"
+    ext1.mkdir()
+    (ext1 / "manifest.json").write_text('{"manifest_version": 3, "name": "Ext 1"}', encoding="utf-8")
+
+    ext2 = tmp_path / "ext_two"
+    ext2.mkdir()
+    (ext2 / "manifest.json").write_text('{"manifest_version": 3, "name": "Ext 2"}', encoding="utf-8")
+
+    with pytest.raises(ManifestNotFoundError) as exc:
+        find_extension_root(tmp_path)
+    assert "dataset of 2 separate extensions" in str(exc.value.safe_message)
