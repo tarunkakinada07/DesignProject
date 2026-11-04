@@ -34,11 +34,13 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["X-XSS-Protection"] = "1; mode=block"
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
         response.headers["Content-Security-Policy"] = (
-            "default-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+            "default-src 'self'; "
             "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
             "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
             "img-src 'self' data:; "
-            "connect-src 'self' http://localhost:8000 http://127.0.0.1:8000 http://localhost:5500 http://127.0.0.1:5500 ws://localhost:5500 ws://127.0.0.1:5500; "
+            "connect-src 'self' http://localhost:8000 http://127.0.0.1:8000 "
+            "http://localhost:5500 http://127.0.0.1:5500 "
+            "ws://localhost:5500 ws://127.0.0.1:5500;"
         )
         return response
 

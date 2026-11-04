@@ -17,6 +17,7 @@ dependencies = [
     "pandas>=2.2.0",
     "numpy>=1.26.0",
     "scipy>=1.13.0",
+    "esprima>=4.0.1",
 ]
 
 [project.optional-dependencies]
@@ -44,3 +45,7 @@ ignore = ["B008", "E501"]
 [tool.pytest.ini_options]
 testpaths = ["backend/tests"]
 pythonpath = ["."]
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["ml*", "backend*"]
+exclude = ["fresh*", "frontend*", "academic_presentation_bundle*", "tests*"]

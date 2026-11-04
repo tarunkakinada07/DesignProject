@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sentinel Extension — Static Extension Security Scanner</title>
   <link rel="stylesheet" href="style.css">
-  <!-- Chart.js for Evaluation & Risk Visualizations -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
 </head>
 <body>
   <div class="app-layout">
@@ -22,10 +20,16 @@
           <p class="subtitle">Static Malicious Browser-Extension Detector &middot; ML + Heuristics + Threat Intel</p>
         </div>
       </div>
+
       <div class="header-status">
         <span class="status-indicator" id="system-status-dot"></span>
         <span class="status-label" id="system-status-text">Connecting to backend...</span>
-        <a href="/api/docs/download-pdf" class="btn btn-primary" download style="text-decoration: none; padding: 0.35rem 0.75rem; font-size: 0.78rem; margin-left: 0.5rem;">📥 Download Technical PDF Report</a>
+        <a href="/api/docs/download-pdf"
+           class="btn btn-primary"
+           download
+           style="text-decoration: none; padding: 0.35rem 0.75rem; font-size: 0.78rem; margin-left: 0.5rem;">
+          📥 Download Technical PDF Report
+        </a>
       </div>
     </header>
 
@@ -34,14 +38,13 @@
       <button class="tab-btn active" data-tab="overview-view">
         <span class="tab-icon">📊</span> Overview
       </button>
+
       <button class="tab-btn" data-tab="scanner-view">
         <span class="tab-icon">🔍</span> Extension Scanner
       </button>
+
       <button class="tab-btn" data-tab="history-view">
         <span class="tab-icon">📜</span> Scan History
-      </button>
-      <button class="tab-btn" data-tab="evaluation-view">
-        <span class="tab-icon">🧪</span> Model Evaluation
       </button>
     </nav>
 
@@ -50,23 +53,27 @@
 
       <!-- ================= 1. OVERVIEW VIEW ================= -->
       <section id="overview-view" class="view-panel active">
-        <!-- Live DB Stats Cards -->
+
+        <!-- Live Database Statistics -->
         <div class="metrics-grid">
           <div class="metric-box">
             <span class="metric-label">Total Provenance Samples</span>
             <span class="metric-value" id="stats-total-samples">-</span>
             <span class="metric-sub" id="stats-breakdown">Loading DB counts...</span>
           </div>
+
           <div class="metric-box">
             <span class="metric-label">Threat Intel Malicious IOCs</span>
             <span class="metric-value text-red" id="stats-malicious">-</span>
             <span class="metric-sub">Known malicious extensions</span>
           </div>
+
           <div class="metric-box">
             <span class="metric-label">Benign Baseline Samples</span>
             <span class="metric-value text-green" id="stats-benign">-</span>
             <span class="metric-sub">Verified benign packages</span>
           </div>
+
           <div class="metric-box">
             <span class="metric-label">Local Scans Completed</span>
             <span class="metric-value text-cyan" id="stats-total-scans">-</span>
@@ -79,9 +86,14 @@
           <div class="card-header-flex">
             <div>
               <h2>Active Detector Model</h2>
-              <p class="section-desc">Machine learning detector registered for real-time static inference.</p>
+              <p class="section-desc">
+                Machine learning detector registered for real-time static inference.
+              </p>
             </div>
-            <span class="badge-pill success" id="active-model-status-badge">Loaded & Active</span>
+
+            <span class="badge-pill success" id="active-model-status-badge">
+              Loaded & Active
+            </span>
           </div>
 
           <div class="details-grid" id="active-model-details">
@@ -89,22 +101,27 @@
               <span class="detail-label">Model Algorithm:</span>
               <strong id="model-algo">-</strong>
             </div>
+
             <div class="detail-item">
               <span class="detail-label">Feature Schema Version:</span>
               <span id="model-schema">-</span>
             </div>
+
             <div class="detail-item">
               <span class="detail-label">Alert Threshold:</span>
               <span id="model-threshold">-</span>
             </div>
+
             <div class="detail-item">
               <span class="detail-label">Calibration Applied:</span>
               <span id="model-calibration">-</span>
             </div>
+
             <div class="detail-item">
               <span class="detail-label">Trained Timestamp:</span>
               <span id="model-trained-at">-</span>
             </div>
+
             <div class="detail-item">
               <span class="detail-label">Total Extracted Features:</span>
               <span>60 Static Features (Groups A-D)</span>
@@ -115,38 +132,65 @@
         <!-- Architecture Flow -->
         <div class="card">
           <h2>Static Security Inspection Architecture</h2>
-          <p class="section-desc">Strict zero-code-execution pipeline designed for safe extension auditing.</p>
-          
+          <p class="section-desc">
+            Strict zero-code-execution pipeline designed for safe extension auditing.
+          </p>
+
           <div class="pipeline-grid">
+
             <div class="pipeline-step">
               <div class="step-num">1</div>
               <div class="step-title">Safe Extraction</div>
-              <p class="step-desc">CRX3/CRX2 header validation, Zip-Slip traversal blocking, 50MB expansion and file nesting limit enforcement.</p>
+              <p class="step-desc">
+                CRX3/CRX2 header validation, Zip-Slip traversal blocking,
+                50MB expansion and file nesting limit enforcement.
+              </p>
             </div>
+
             <div class="pipeline-step">
               <div class="step-num">2</div>
               <div class="step-title">Threat Intel Lookup</div>
-              <p class="step-desc">Exact SHA-256 and Extension ID lookup against verified malicious repository records.</p>
+              <p class="step-desc">
+                Exact SHA-256 and Extension ID lookup against verified
+                malicious repository records.
+              </p>
             </div>
+
             <div class="pipeline-step">
               <div class="step-num">3</div>
               <div class="step-title">Feature Extraction</div>
-              <p class="step-desc">Deterministic numeric vectors: Manifest (Group A), JS AST/Calls (Group B), Obfuscation vs Minification (Group C), Behavioral combinations (Group D).</p>
+              <p class="step-desc">
+                Deterministic numeric vectors: Manifest (Group A),
+                JS AST/Calls (Group B), Obfuscation vs Minification
+                (Group C), Behavioral combinations (Group D).
+              </p>
             </div>
+
             <div class="pipeline-step">
               <div class="step-num">4</div>
               <div class="step-title">ML Scoring & SHAP</div>
-              <p class="step-desc">Calibrated probability estimation and Tree SHAP local feature attribution showing top risk factors.</p>
+              <p class="step-desc">
+                Calibrated probability estimation and Tree SHAP local
+                feature attribution showing top risk factors.
+              </p>
             </div>
+
             <div class="pipeline-step">
               <div class="step-num">5</div>
               <div class="step-title">Audit Logging</div>
-              <p class="step-desc">Structured JSON report persisted to SQLite history with prevalence and limitation notices.</p>
+              <p class="step-desc">
+                Structured JSON report persisted to SQLite history
+                with prevalence and limitation notices.
+              </p>
             </div>
+
           </div>
 
           <div class="notice-box info" style="margin-top: 1.5rem;">
-            <strong>Static Analysis Safe Guarantee:</strong> Extensions uploaded to Sentinel Extension are inspected strictly without execution. Zero sandbox or code interpretation is permitted.
+            <strong>Static Analysis Safe Guarantee:</strong>
+            Extensions uploaded to Sentinel Extension are inspected
+            strictly without execution. Zero sandbox or code interpretation
+            is permitted.
           </div>
         </div>
       </section>
@@ -155,27 +199,42 @@
       <section id="scanner-view" class="view-panel">
         <div class="card">
           <h2>Upload Extension Package for Inspection</h2>
-          <p class="section-desc">Inspect Chrome extensions (<code>.crx</code> or <code>.zip</code>) strictly via static analysis.</p>
-          
+
+          <p class="section-desc">
+            Inspect Chrome extensions (<code>.crx</code> or <code>.zip</code>)
+            strictly via static analysis.
+          </p>
+
           <div class="drop-zone" id="drop-zone">
             <div class="drop-icon">📦</div>
-            <p>Drag & drop <strong>.crx</strong> or <strong>.zip</strong> archive here</p>
-            <p class="drop-sub">or click to browse from local disk (Max 50MB uncompressed limit)</p>
+
+            <p>
+              Drag &amp; drop <strong>.crx</strong> or
+              <strong>.zip</strong> archive here
+            </p>
+
+            <p class="drop-sub">
+              or click to browse from local disk (Max 50MB uncompressed limit)
+            </p>
+
             <input type="file" id="file-input" accept=".crx,.zip" hidden>
           </div>
 
-          <!-- Loading state -->
+          <!-- Loading State -->
           <div id="scan-progress" class="progress-bar-container hidden">
             <div class="spinner"></div>
+
             <div style="flex: 1;">
               <div class="progress-bar-fill" id="progress-fill"></div>
-              <span class="progress-text" id="progress-text">Processing package...</span>
+              <span class="progress-text" id="progress-text">
+                Processing package...
+              </span>
             </div>
           </div>
 
-          <!-- Scan Results Area -->
+          <!-- Scan Results -->
           <div id="scan-result" class="scan-result-card hidden">
-            <!-- Dynamic Scan Report populated by app.js -->
+            <!-- Dynamic scan report populated by app.js -->
           </div>
         </div>
       </section>
@@ -186,13 +245,23 @@
           <div class="card-header-flex">
             <div>
               <h2>Audit Scan History</h2>
-              <p class="section-desc">Persistent SQLite record of inspected extensions and verdict reports.</p>
+              <p class="section-desc">
+                Persistent SQLite record of inspected extensions and verdict reports.
+              </p>
             </div>
-            <button class="btn btn-secondary" id="btn-refresh-history">🔄 Refresh</button>
+
+            <button class="btn btn-secondary" id="btn-refresh-history">
+              🔄 Refresh
+            </button>
           </div>
 
           <div class="search-bar-row">
-            <input type="text" id="history-search" class="input-text" placeholder="Search by Extension Name, ID, or SHA-256...">
+            <input
+              type="text"
+              id="history-search"
+              class="input-text"
+              placeholder="Search by Extension Name, ID, or SHA-256..."
+            >
           </div>
 
           <div class="table-responsive">
@@ -208,203 +277,15 @@
                   <th>Actions</th>
                 </tr>
               </thead>
+
               <tbody id="history-table-body">
-                <tr><td colspan="7" class="text-center">Loading scan history...</td></tr>
+                <tr>
+                  <td colspan="7" class="text-center">
+                    Loading scan history...
+                  </td>
+                </tr>
               </tbody>
             </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- ================= 4. EVALUATION VIEW ================= -->
-      <section id="evaluation-view" class="view-panel">
-        <div class="card">
-          <div class="card-header-flex">
-            <div>
-              <h2>Detector Performance & Scientific Evaluation</h2>
-              <p class="section-desc">Empirical metrics from held-out test evaluation, bootstrapping, ablation, and robustness testing.</p>
-            </div>
-            <button class="btn btn-secondary" id="btn-refresh-eval">🔄 Reload Report</button>
-          </div>
-
-          <!-- Core Metrics Grid -->
-          <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
-            <div class="metric-box">
-              <span class="metric-label">Precision</span>
-              <span class="metric-value text-cyan" id="eval-prec">-</span>
-            </div>
-            <div class="metric-box">
-              <span class="metric-label">Recall</span>
-              <span class="metric-value text-green" id="eval-rec">-</span>
-            </div>
-            <div class="metric-box">
-              <span class="metric-label">F1-Score</span>
-              <span class="metric-value text-cyan" id="eval-f1">-</span>
-            </div>
-            <div class="metric-box">
-              <span class="metric-label">False Positive Rate</span>
-              <span class="metric-value text-red" id="eval-fpr">-</span>
-            </div>
-            <div class="metric-box">
-              <span class="metric-label">ROC-AUC</span>
-              <span class="metric-value text-cyan" id="eval-roc">-</span>
-            </div>
-            <div class="metric-box">
-              <span class="metric-label">PR-AUC</span>
-              <span class="metric-value text-cyan" id="eval-prauc">-</span>
-            </div>
-            <div class="metric-box">
-              <span class="metric-label">Latency / Sample</span>
-              <span class="metric-value" id="eval-latency">-</span>
-            </div>
-            <div class="metric-box">
-              <span class="metric-label">Brier Calibration</span>
-              <span class="metric-value" id="eval-brier">-</span>
-            </div>
-          </div>
-
-          <!-- Confusion Matrix & Prevalence Side-by-Side -->
-          <div class="two-col-grid" style="margin-top: 1.5rem;">
-            <!-- Raw Confusion Matrix -->
-            <div class="sub-card">
-              <h3>Held-Out Confusion Matrix (Raw Counts)</h3>
-              <p class="sub-desc">Zero fabrication: exact test sample predictions at operating threshold.</p>
-              
-              <div class="confusion-matrix-grid">
-                <div class="cm-cell header-cell"></div>
-                <div class="cm-cell header-cell">Pred Benign</div>
-                <div class="cm-cell header-cell">Pred Malicious</div>
-
-                <div class="cm-cell header-cell">Actual Benign</div>
-                <div class="cm-cell tn-cell">
-                  <div class="cm-val" id="cm-tn">0</div>
-                  <div class="cm-lbl">True Negative</div>
-                </div>
-                <div class="cm-cell fp-cell">
-                  <div class="cm-val" id="cm-fp">0</div>
-                  <div class="cm-lbl">False Positive</div>
-                </div>
-
-                <div class="cm-cell header-cell">Actual Malicious</div>
-                <div class="cm-cell fn-cell">
-                  <div class="cm-val" id="cm-fn">0</div>
-                  <div class="cm-lbl">False Negative</div>
-                </div>
-                <div class="cm-cell tp-cell">
-                  <div class="cm-val" id="cm-tp">0</div>
-                  <div class="cm-lbl">True Positive</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Realistic Prevalence Adjustment -->
-            <div class="sub-card">
-              <h3>Realistic Prevalence Adjustment (Bayes' Theorem)</h3>
-              <p class="sub-desc">Addressing base rate fallacy in real-world extension stores (<1% malware).</p>
-              
-              <table class="meta-table">
-                <tr>
-                  <th>Test Set Precision:</th>
-                  <td><strong id="prev-test-prec">-</strong></td>
-                </tr>
-                <tr>
-                  <th>Expected Precision @ 1.0% Base Rate:</th>
-                  <td><strong class="text-yellow" id="prev-1pct">-</strong></td>
-                </tr>
-                <tr>
-                  <th>Expected Precision @ 0.1% Base Rate:</th>
-                  <td><strong class="text-red" id="prev-01pct">-</strong></td>
-                </tr>
-              </table>
-
-              <div class="notice-box warning" style="margin-top: 0.8rem; font-size: 0.85rem;" id="eval-prev-warning">
-                Loading prevalence warning...
-              </div>
-            </div>
-          </div>
-
-          <!-- Feature Group Ablation Progression -->
-          <div class="sub-card" style="margin-top: 1.5rem;">
-            <h3>Feature Group Ablation Study</h3>
-            <p class="sub-desc">Incremental contribution of each feature group evaluated under identical protocols and seeds.</p>
-            <div class="table-responsive">
-              <table class="data-table" id="ablation-table">
-                <thead>
-                  <tr>
-                    <th>Ablation Tier</th>
-                    <th>Feature Count</th>
-                    <th>Precision</th>
-                    <th>Recall</th>
-                    <th>F1 Score</th>
-                    <th>FPR</th>
-                    <th>Delta F1 Gain</th>
-                  </tr>
-                </thead>
-                <tbody id="ablation-table-body">
-                  <tr><td colspan="7" class="text-center">Loading ablation results...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- Bootstrap & Obfuscation Two-Column -->
-          <div class="two-col-grid" style="margin-top: 1.5rem;">
-            <!-- Bootstrap 95% Confidence Intervals -->
-            <div class="sub-card">
-              <h3>95% Bootstrap Confidence Intervals</h3>
-              <p class="sub-desc" id="bootstrap-disclosure">500 bootstrap iterations with empirical percentiles [2.5%, 97.5%].</p>
-              <table class="meta-table" id="bootstrap-table">
-                <thead>
-                  <tr>
-                    <th>Metric</th>
-                    <th>Estimate</th>
-                    <th>95% CI Range</th>
-                  </tr>
-                </thead>
-                <tbody id="bootstrap-table-body">
-                  <tr><td colspan="3" class="text-center">Loading intervals...</td></tr>
-                </tbody>
-              </table>
-            </div>
-
-            <!-- Obfuscation Robustness -->
-            <div class="sub-card">
-              <h3>Obfuscation Robustness Stress Test</h3>
-              <p class="sub-desc">Simulated standard JS obfuscation (hex identifiers, rotation loops, base64 blobs, entropy).</p>
-              <table class="meta-table">
-                <tr>
-                  <th>Baseline Recall &rarr; Obfuscated:</th>
-                  <td><span id="obf-recall-shift">-</span></td>
-                </tr>
-                <tr>
-                  <th>Baseline FPR &rarr; Obfuscated:</th>
-                  <td><span id="obf-fpr-shift">-</span></td>
-                </tr>
-              </table>
-              <div class="notice-box info" style="margin-top: 0.8rem;" id="obf-interpretation">
-                Loading robustness data...
-              </div>
-            </div>
-          </div>
-
-          <!-- Structured Error Analysis -->
-          <div class="sub-card" style="margin-top: 1.5rem;">
-            <h3>Structured Error Analysis (Failure Taxonomy)</h3>
-            <p class="sub-desc">Transparent breakdown of edge cases triggering model false alarms or misses.</p>
-            <div class="two-col-grid">
-              <div>
-                <h4 style="color: var(--accent-yellow); margin-bottom: 0.5rem;">False Positive Failure Modes (<span id="fp-count">0</span>)</h4>
-                <ul class="error-list" id="fp-category-list">
-                  <li>No false positives recorded.</li>
-                </ul>
-              </div>
-              <div>
-                <h4 style="color: var(--accent-red); margin-bottom: 0.5rem;">False Negative Failure Modes (<span id="fn-count">0</span>)</h4>
-                <ul class="error-list" id="fn-category-list">
-                  <li>No false negatives recorded.</li>
-                </ul>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -418,450 +299,33 @@
           <h2 id="modal-title">Scan Report Details</h2>
           <button class="modal-close-btn" id="modal-close">&times;</button>
         </div>
+
         <div class="modal-body" id="modal-body">
           <!-- Dynamic JSON / formatted report -->
         </div>
+
         <div class="modal-footer">
-          <button class="btn btn-secondary" id="modal-btn-download">Download JSON Report</button>
-          <button class="btn btn-primary" id="modal-btn-close">Close</button>
+          <button class="btn btn-secondary" id="modal-btn-download">
+            Download JSON Report
+          </button>
+
+          <button class="btn btn-primary" id="modal-btn-close">
+            Close
+          </button>
         </div>
       </div>
     </div>
 
     <!-- Footer -->
     <footer class="footer">
-      <p>Sentinel Extension &middot; B.Tech Capstone Project &middot; Zero dynamic execution &middot; Localhost 8000 only.</p>
+      <p>
+        Sentinel Extension &middot; B.Tech Capstone Project
+        &middot; Zero dynamic execution &middot; Localhost 8000 only.
+      </p>
     </footer>
+
   </div>
 
   <script src="/static/app.js"></script>
-</body>
-</html>
-
-    <!-- Header -->
-    <header class="top-nav">
-      <div class="brand">
-        <span class="shield-icon">🛡️</span>
-        <div class="brand-text">
-          <div class="brand-title-row">
-            <h1>Sentinel Extension</h1>
-            <span class="badge-pill local-badge">Localhost Only</span>
-          </div>
-          <p class="subtitle">Static Malicious Browser-Extension Detector &middot; ML + Heuristics + Threat Intel</p>
-        </div>
-      </div>
-      <div class="header-status">
-        <span class="status-indicator" id="system-status-dot"></span>
-        <span class="status-label" id="system-status-text">Connecting to backend...</span>
-        <a href="/api/docs/download-pdf" class="btn btn-primary" download style="text-decoration: none; padding: 0.35rem 0.75rem; font-size: 0.78rem; margin-left: 0.5rem;">📥 Download Technical PDF Report</a>
-      </div>
-    </header>
-
-    <!-- Main Navigation Tabs -->
-    <nav class="tab-bar">
-      <button class="tab-btn active" data-tab="overview-view">
-        <span class="tab-icon">📊</span> Overview
-      </button>
-      <button class="tab-btn" data-tab="scanner-view">
-        <span class="tab-icon">🔍</span> Extension Scanner
-      </button>
-      <button class="tab-btn" data-tab="history-view">
-        <span class="tab-icon">📜</span> Scan History
-      </button>
-      <button class="tab-btn" data-tab="evaluation-view">
-        <span class="tab-icon">🧪</span> Model Evaluation
-      </button>
-    </nav>
-
-    <!-- Content Views -->
-    <main class="main-content">
-
-      <!-- ================= 1. OVERVIEW VIEW ================= -->
-      <section id="overview-view" class="view-panel active">
-        <!-- Live DB Stats Cards -->
-        <div class="metrics-grid">
-          <div class="metric-box">
-            <span class="metric-label">Total Provenance Samples</span>
-            <span class="metric-value" id="stats-total-samples">-</span>
-            <span class="metric-sub" id="stats-breakdown">Loading DB counts...</span>
-          </div>
-          <div class="metric-box">
-            <span class="metric-label">Threat Intel Malicious IOCs</span>
-            <span class="metric-value text-red" id="stats-malicious">-</span>
-            <span class="metric-sub">Known malicious extensions</span>
-          </div>
-          <div class="metric-box">
-            <span class="metric-label">Benign Baseline Samples</span>
-            <span class="metric-value text-green" id="stats-benign">-</span>
-            <span class="metric-sub">Verified benign packages</span>
-          </div>
-          <div class="metric-box">
-            <span class="metric-label">Local Scans Completed</span>
-            <span class="metric-value text-cyan" id="stats-total-scans">-</span>
-            <span class="metric-sub">Audited in SQLite history</span>
-          </div>
-        </div>
-
-        <!-- Active Model Card -->
-        <div class="card">
-          <div class="card-header-flex">
-            <div>
-              <h2>Active Detector Model</h2>
-              <p class="section-desc">Machine learning detector registered for real-time static inference.</p>
-            </div>
-            <span class="badge-pill success" id="active-model-status-badge">Loaded & Active</span>
-          </div>
-
-          <div class="details-grid" id="active-model-details">
-            <div class="detail-item">
-              <span class="detail-label">Model Algorithm:</span>
-              <strong id="model-algo">-</strong>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Feature Schema Version:</span>
-              <span id="model-schema">-</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Alert Threshold:</span>
-              <span id="model-threshold">-</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Calibration Applied:</span>
-              <span id="model-calibration">-</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Trained Timestamp:</span>
-              <span id="model-trained-at">-</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Total Extracted Features:</span>
-              <span>60 Static Features (Groups A-D)</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Architecture Flow -->
-        <div class="card">
-          <h2>Static Security Inspection Architecture</h2>
-          <p class="section-desc">Strict zero-code-execution pipeline designed for safe extension auditing.</p>
-          
-          <div class="pipeline-grid">
-            <div class="pipeline-step">
-              <div class="step-num">1</div>
-              <div class="step-title">Safe Extraction</div>
-              <p class="step-desc">CRX3/CRX2 header validation, Zip-Slip traversal blocking, 50MB expansion and file nesting limit enforcement.</p>
-            </div>
-            <div class="pipeline-step">
-              <div class="step-num">2</div>
-              <div class="step-title">Threat Intel Lookup</div>
-              <p class="step-desc">Exact SHA-256 and Extension ID lookup against verified malicious repository records.</p>
-            </div>
-            <div class="pipeline-step">
-              <div class="step-num">3</div>
-              <div class="step-title">Feature Extraction</div>
-              <p class="step-desc">Deterministic numeric vectors: Manifest (Group A), JS AST/Calls (Group B), Obfuscation vs Minification (Group C), Behavioral combinations (Group D).</p>
-            </div>
-            <div class="pipeline-step">
-              <div class="step-num">4</div>
-              <div class="step-title">ML Scoring & SHAP</div>
-              <p class="step-desc">Calibrated probability estimation and Tree SHAP local feature attribution showing top risk factors.</p>
-            </div>
-            <div class="pipeline-step">
-              <div class="step-num">5</div>
-              <div class="step-title">Audit Logging</div>
-              <p class="step-desc">Structured JSON report persisted to SQLite history with prevalence and limitation notices.</p>
-            </div>
-          </div>
-
-          <div class="notice-box info" style="margin-top: 1.5rem;">
-            <strong>Static Analysis Safe Guarantee:</strong> Extensions uploaded to Sentinel Extension are inspected strictly without execution. Zero sandbox or code interpretation is permitted.
-          </div>
-        </div>
-      </section>
-
-      <!-- ================= 2. SCANNER VIEW ================= -->
-      <section id="scanner-view" class="view-panel">
-        <div class="card">
-          <h2>Upload Extension Package for Inspection</h2>
-          <p class="section-desc">Inspect Chrome extensions (<code>.crx</code> or <code>.zip</code>) strictly via static analysis.</p>
-          
-          <div class="drop-zone" id="drop-zone">
-            <div class="drop-icon">📦</div>
-            <p>Drag & drop <strong>.crx</strong> or <strong>.zip</strong> archive here</p>
-            <p class="drop-sub">or click to browse from local disk (Max 50MB uncompressed limit)</p>
-            <input type="file" id="file-input" accept=".crx,.zip" hidden>
-          </div>
-
-          <!-- Loading state -->
-          <div id="scan-progress" class="progress-bar-container hidden">
-            <div class="spinner"></div>
-            <div style="flex: 1;">
-              <div class="progress-bar-fill" id="progress-fill"></div>
-              <span class="progress-text" id="progress-text">Processing package...</span>
-            </div>
-          </div>
-
-          <!-- Scan Results Area -->
-          <div id="scan-result" class="scan-result-card hidden">
-            <!-- Dynamic Scan Report populated by app.js -->
-          </div>
-        </div>
-      </section>
-
-      <!-- ================= 3. HISTORY VIEW ================= -->
-      <section id="history-view" class="view-panel">
-        <div class="card">
-          <div class="card-header-flex">
-            <div>
-              <h2>Audit Scan History</h2>
-              <p class="section-desc">Persistent SQLite record of inspected extensions and verdict reports.</p>
-            </div>
-            <button class="btn btn-secondary" id="btn-refresh-history">🔄 Refresh</button>
-          </div>
-
-          <div class="search-bar-row">
-            <input type="text" id="history-search" class="input-text" placeholder="Search by Extension Name, ID, or SHA-256...">
-          </div>
-
-          <div class="table-responsive">
-            <table class="data-table" id="history-table">
-              <thead>
-                <tr>
-                  <th>Timestamp</th>
-                  <th>Extension Name</th>
-                  <th>Version</th>
-                  <th>SHA-256</th>
-                  <th>Risk Verdict</th>
-                  <th>Risk Score</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="history-table-body">
-                <tr><td colspan="7" class="text-center">Loading scan history...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- ================= 4. EVALUATION VIEW ================= -->
-      <section id="evaluation-view" class="view-panel">
-        <div class="card">
-          <div class="card-header-flex">
-            <div>
-              <h2>Detector Performance & Scientific Evaluation</h2>
-              <p class="section-desc">Empirical metrics from held-out test evaluation, bootstrapping, ablation, and robustness testing.</p>
-            </div>
-            <button class="btn btn-secondary" id="btn-refresh-eval">🔄 Reload Report</button>
-          </div>
-
-          <!-- Core Metrics Grid -->
-          <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
-            <div class="metric-box">
-              <span class="metric-label">Precision</span>
-              <span class="metric-value text-cyan" id="eval-prec">-</span>
-            </div>
-            <div class="metric-box">
-              <span class="metric-label">Recall</span>
-              <span class="metric-value text-green" id="eval-rec">-</span>
-            </div>
-            <div class="metric-box">
-              <span class="metric-label">F1-Score</span>
-              <span class="metric-value text-cyan" id="eval-f1">-</span>
-            </div>
-            <div class="metric-box">
-              <span class="metric-label">False Positive Rate</span>
-              <span class="metric-value text-red" id="eval-fpr">-</span>
-            </div>
-            <div class="metric-box">
-              <span class="metric-label">ROC-AUC</span>
-              <span class="metric-value text-cyan" id="eval-roc">-</span>
-            </div>
-            <div class="metric-box">
-              <span class="metric-label">PR-AUC</span>
-              <span class="metric-value text-cyan" id="eval-prauc">-</span>
-            </div>
-            <div class="metric-box">
-              <span class="metric-label">Latency / Sample</span>
-              <span class="metric-value" id="eval-latency">-</span>
-            </div>
-            <div class="metric-box">
-              <span class="metric-label">Brier Calibration</span>
-              <span class="metric-value" id="eval-brier">-</span>
-            </div>
-          </div>
-
-          <!-- Confusion Matrix & Prevalence Side-by-Side -->
-          <div class="two-col-grid" style="margin-top: 1.5rem;">
-            <!-- Raw Confusion Matrix -->
-            <div class="sub-card">
-              <h3>Held-Out Confusion Matrix (Raw Counts)</h3>
-              <p class="sub-desc">Zero fabrication: exact test sample predictions at operating threshold.</p>
-              
-              <div class="confusion-matrix-grid">
-                <div class="cm-cell header-cell"></div>
-                <div class="cm-cell header-cell">Pred Benign</div>
-                <div class="cm-cell header-cell">Pred Malicious</div>
-
-                <div class="cm-cell header-cell">Actual Benign</div>
-                <div class="cm-cell tn-cell">
-                  <div class="cm-val" id="cm-tn">0</div>
-                  <div class="cm-lbl">True Negative</div>
-                </div>
-                <div class="cm-cell fp-cell">
-                  <div class="cm-val" id="cm-fp">0</div>
-                  <div class="cm-lbl">False Positive</div>
-                </div>
-
-                <div class="cm-cell header-cell">Actual Malicious</div>
-                <div class="cm-cell fn-cell">
-                  <div class="cm-val" id="cm-fn">0</div>
-                  <div class="cm-lbl">False Negative</div>
-                </div>
-                <div class="cm-cell tp-cell">
-                  <div class="cm-val" id="cm-tp">0</div>
-                  <div class="cm-lbl">True Positive</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Realistic Prevalence Adjustment -->
-            <div class="sub-card">
-              <h3>Realistic Prevalence Adjustment (Bayes' Theorem)</h3>
-              <p class="sub-desc">Addressing base rate fallacy in real-world extension stores (<1% malware).</p>
-              
-              <table class="meta-table">
-                <tr>
-                  <th>Test Set Precision:</th>
-                  <td><strong id="prev-test-prec">-</strong></td>
-                </tr>
-                <tr>
-                  <th>Expected Precision @ 1.0% Base Rate:</th>
-                  <td><strong class="text-yellow" id="prev-1pct">-</strong></td>
-                </tr>
-                <tr>
-                  <th>Expected Precision @ 0.1% Base Rate:</th>
-                  <td><strong class="text-red" id="prev-01pct">-</strong></td>
-                </tr>
-              </table>
-
-              <div class="notice-box warning" style="margin-top: 0.8rem; font-size: 0.85rem;" id="eval-prev-warning">
-                Loading prevalence warning...
-              </div>
-            </div>
-          </div>
-
-          <!-- Feature Group Ablation Progression -->
-          <div class="sub-card" style="margin-top: 1.5rem;">
-            <h3>Feature Group Ablation Study</h3>
-            <p class="sub-desc">Incremental contribution of each feature group evaluated under identical protocols and seeds.</p>
-            <div class="table-responsive">
-              <table class="data-table" id="ablation-table">
-                <thead>
-                  <tr>
-                    <th>Ablation Tier</th>
-                    <th>Feature Count</th>
-                    <th>Precision</th>
-                    <th>Recall</th>
-                    <th>F1 Score</th>
-                    <th>FPR</th>
-                    <th>Delta F1 Gain</th>
-                  </tr>
-                </thead>
-                <tbody id="ablation-table-body">
-                  <tr><td colspan="7" class="text-center">Loading ablation results...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- Bootstrap & Obfuscation Two-Column -->
-          <div class="two-col-grid" style="margin-top: 1.5rem;">
-            <!-- Bootstrap 95% Confidence Intervals -->
-            <div class="sub-card">
-              <h3>95% Bootstrap Confidence Intervals</h3>
-              <p class="sub-desc" id="bootstrap-disclosure">500 bootstrap iterations with empirical percentiles [2.5%, 97.5%].</p>
-              <table class="meta-table" id="bootstrap-table">
-                <thead>
-                  <tr>
-                    <th>Metric</th>
-                    <th>Estimate</th>
-                    <th>95% CI Range</th>
-                  </tr>
-                </thead>
-                <tbody id="bootstrap-table-body">
-                  <tr><td colspan="3" class="text-center">Loading intervals...</td></tr>
-                </tbody>
-              </table>
-            </div>
-
-            <!-- Obfuscation Robustness -->
-            <div class="sub-card">
-              <h3>Obfuscation Robustness Stress Test</h3>
-              <p class="sub-desc">Simulated standard JS obfuscation (hex identifiers, rotation loops, base64 blobs, entropy).</p>
-              <table class="meta-table">
-                <tr>
-                  <th>Baseline Recall &rarr; Obfuscated:</th>
-                  <td><span id="obf-recall-shift">-</span></td>
-                </tr>
-                <tr>
-                  <th>Baseline FPR &rarr; Obfuscated:</th>
-                  <td><span id="obf-fpr-shift">-</span></td>
-                </tr>
-              </table>
-              <div class="notice-box info" style="margin-top: 0.8rem;" id="obf-interpretation">
-                Loading robustness data...
-              </div>
-            </div>
-          </div>
-
-          <!-- Structured Error Analysis -->
-          <div class="sub-card" style="margin-top: 1.5rem;">
-            <h3>Structured Error Analysis (Failure Taxonomy)</h3>
-            <p class="sub-desc">Transparent breakdown of edge cases triggering model false alarms or misses.</p>
-            <div class="two-col-grid">
-              <div>
-                <h4 style="color: var(--accent-yellow); margin-bottom: 0.5rem;">False Positive Failure Modes (<span id="fp-count">0</span>)</h4>
-                <ul class="error-list" id="fp-category-list">
-                  <li>No false positives recorded.</li>
-                </ul>
-              </div>
-              <div>
-                <h4 style="color: var(--accent-red); margin-bottom: 0.5rem;">False Negative Failure Modes (<span id="fn-count">0</span>)</h4>
-                <ul class="error-list" id="fn-category-list">
-                  <li>No false negatives recorded.</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-    </main>
-
-    <!-- Scan Detail Modal -->
-    <div id="detail-modal" class="modal-overlay hidden">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2 id="modal-title">Scan Report Details</h2>
-          <button class="modal-close-btn" id="modal-close">&times;</button>
-        </div>
-        <div class="modal-body" id="modal-body">
-          <!-- Dynamic JSON / formatted report -->
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" id="modal-btn-download">Download JSON Report</button>
-          <button class="btn btn-primary" id="modal-btn-close">Close</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="footer">
-      <p>Sentinel Extension &middot; B.Tech Capstone Project &middot; Zero dynamic execution &middot; Localhost 8000 only.</p>
-    </footer>
-  </div>
-
-  <script src="app.js"></script>
 </body>
 </html>

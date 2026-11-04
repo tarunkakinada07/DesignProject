@@ -19,37 +19,40 @@ def apply_synthetic_obfuscation_transform(
     x: np.ndarray,
     feature_names: list[str] | None = None,
 ) -> np.ndarray:
-    """Simulate the effect of JavaScript obfuscation tools (e.g. Obfuscator.io) on static features."""
-    x_obf = x.copy()
+    """Apply a mild feature-level perturbation without forcing every sample to look malicious.
+
+    This is a sensitivity simulation, not a substitute for transforming actual JS files.
+    In particular, the composite obfuscation score is not overwritten: it should be
+    computed from source evidence by the feature extractor, not injected as a label-like cue.
+    """
+    x_obf = np.asarray(x, dtype=float).copy()
     names = feature_names or ALL_FEATURE_KEYS
     name_to_idx = {name: i for i, name in enumerate(names)}
 
-    # 1. Hex identifiers increase significantly
+    # Apply small, bounded shifts only to low-level features. Do not set strong indicators
+    # (such as string rotation) to 1 for every benign and malicious sample.
     if "hex_identifier_count" in name_to_idx:
-        x_obf[:, name_to_idx["hex_identifier_count"]] += 15.0
+        idx = name_to_idx["hex_identifier_count"]
+        x_obf[:, idx] += np.minimum(2.0, np.maximum(0.0, x_obf[:, idx] * 0.10))
 
-    # 2. String array rotation loops introduced
-    if "string_array_rotation_pattern" in name_to_idx:
-        x_obf[:, name_to_idx["string_array_rotation_pattern"]] = 1.0
-
-    # 3. Base64 and hex blobs generated
     if "long_base64_blob_count" in name_to_idx:
-        x_obf[:, name_to_idx["long_base64_blob_count"]] += 4.0
+        idx = name_to_idx["long_base64_blob_count"]
+        x_obf[:, idx] += np.minimum(1.0, np.maximum(0.0, x_obf[:, idx] * 0.10))
 
-    # 4. Escape sequence density increases
     if "escape_sequence_ratio" in name_to_idx:
-        x_obf[:, name_to_idx["escape_sequence_ratio"]] = np.maximum(
-            x_obf[:, name_to_idx["escape_sequence_ratio"]], 0.05
-        )
+        idx = name_to_idx["escape_sequence_ratio"]
+        # A small increase, capped at a plausible low ratio; avoid making every sample
+        # cross a high-risk threshold solely because of the simulation.
+        x_obf[:, idx] = np.minimum(0.02, x_obf[:, idx] + 0.002)
 
-    # 5. Obfuscation composite risk score jumps
-    if "obfuscation_risk_score" in name_to_idx:
-        x_obf[:, name_to_idx["obfuscation_risk_score"]] = 0.85
-
-    # 6. Source entropy elevates
     if "shannon_entropy_source" in name_to_idx:
-        x_obf[:, name_to_idx["shannon_entropy_source"]] += 0.8
+        idx = name_to_idx["shannon_entropy_source"]
+        # Small shift rather than the previous large +0.8 jump.
+        x_obf[:, idx] += 0.05
 
+    # Deliberately do not force string_array_rotation_pattern = 1 and do not set
+    # obfuscation_risk_score = 0.85 for every row. Those operations artificially
+    # mark every benign sample as obfuscated and can make FPR hit 100% by construction.
     return x_obf
 
 
